@@ -1,6 +1,5 @@
 import json
-import time
-from typing import Union
+
 from . import helpers
 
 
@@ -32,6 +31,7 @@ def task_writer(
         timestamp = helpers.time_stamp()
 
         json_data[f"tsk{json_data['no_of_total_tasks'] + 1}"] = {
+            "task_id": json_data["no_of_total_tasks"] + 1,
             "description": desc,
             "status": "todo",
             "createdAt": timestamp,
@@ -40,6 +40,8 @@ def task_writer(
         json_data["no_of_total_tasks"] += 1
         with open("data.json", "w") as file:
             json.dump(json_data, file)
+
+        print(f"Output: Task added successfully (ID: {json_data["no_of_total_tasks"]})")
 
     elif mode == "delete":
         json_data.pop(f"tsk{task_id}")
@@ -56,3 +58,18 @@ def task_writer(
 
         with open("data.json", "w") as file:
             json.dump(json_data, file)
+
+    elif mode == "update":
+        json_data[f"tsk{task_id}"]["description"] = desc
+        json_data[f"tsk{task_id}"]["modifiedAt"] = helpers.time_stamp()
+
+        with open("data.json", "w") as file:
+            json.dump(json_data, file)
+
+
+def list_task(mode: str, json_data: dict):
+
+    if mode in ["done", "todo", "in-progress"]:
+        for i in range(1, json_data["no_of_total_tasks"] + 1):
+            if json_data[f"tsk{i}"]["status"] == mode:
+                print(json_data[f"tsk{i}"])
