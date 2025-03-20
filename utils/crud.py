@@ -68,7 +68,15 @@ def task_writer(
 
 
 def list_task(mode: str, json_data: dict):
+    """Lists tasks from the provided data based on their status.
 
+    Args:
+        mode (str): The status to filter tasks by. Valid values are "done", "todo", or "in-progress".
+        json_data (dict): A dictionary containing the task data, where keys are task IDs and values are task details (including 'status').
+
+    Returns:
+        None: This function prints the details of the tasks that match the specified status to the console.
+    """
     if mode in ["done", "todo", "in-progress"]:
         for i in range(1, json_data["no_of_total_tasks"] + 1):
             if json_data[f"tsk{i}"]["status"] == mode:
