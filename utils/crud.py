@@ -1,16 +1,32 @@
 import json
 import time
+from typing import Union
 from . import helpers
 
 
-def file_writer(
+def task_writer(
     mode: str,
     json_data: dict,
     desc: str = None,
     task_id: int = 0,
 ):
-    """
-    "add", "update", "delete"
+    """Manages the creation, deletion, and status updates of tasks in the task tracker data.
+
+    Args:
+        mode (str): The operation to perform. Valid values are:
+            - "add": Adds a new task. Requires the 'desc' argument.
+            - "delete": Deletes an existing task. Requires the 'task_id' argument.
+            - "mark-in-progress": Marks an existing task as 'in-progress'. Requires the 'task_id' argument.
+            - "mark-done": Marks an existing task as 'done'. Requires the 'task_id' argument.
+        json_data (dict): A dictionary containing the task tracker data, typically loaded from 'data.json'.
+        desc (str, optional): The description of the new task to be added. Required when mode is "add". Defaults to None.
+        task_id (int, optional): The ID of the task to be deleted or updated. Required when mode is "delete", "mark-in-progress", or "mark-done". Defaults to 0.
+
+    Raises:
+        KeyError: If 'task_id' is invalid for 'delete', 'mark-in-progress', or 'mark-done' modes.
+
+    Returns:
+        None: This function modifies the 'json_data' dictionary in place and writes the updated data to the 'data.json' file.
     """
     if mode == "add":
         timestamp = helpers.time_stamp()
@@ -27,5 +43,16 @@ def file_writer(
 
     elif mode == "delete":
         json_data.pop(f"tsk{task_id}")
+        json_data["no_of_total_tasks"] -= 1
+
+        with open("data.json", "w") as file:
+            json.dump(json_data, file)
+
+    elif mode in ["mark-in-progress", "mark-done"]:
+        if mode == "mark-done":
+            json_data[f"tsk{task_id}"]["status"] = "done"
+        else:
+            json_data[f"tsk{task_id}"]["status"] = "in-progress"
+
         with open("data.json", "w") as file:
             json.dump(json_data, file)

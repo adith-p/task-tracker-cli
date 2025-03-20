@@ -12,11 +12,14 @@ def main():
         with open("data.json", "a+") as file:
             json.dump(data, file)
 
-    if len(sys.argv) > 2:
-        if sys.argv[1] in ["add", "update", "delete"]:
-            crud.file_writer(
-                json_data=helpers.json_data(), mode=sys.argv[1], desc=sys.argv[2]
-            )
+    json_data = helpers.json_data()
+
+    if len(sys.argv) == 3:
+
+        if sys.argv[1] == "add":
+            crud.task_writer(json_data=json_data, mode=sys.argv[1], desc=sys.argv[2])
+        elif sys.argv[1] == "delete":
+            crud.task_writer(json_data=json_data, mode=sys.argv[1], task_id=sys.argv[2])
 
 
 if __name__ == "__main__":
